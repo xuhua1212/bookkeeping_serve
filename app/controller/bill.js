@@ -2,7 +2,7 @@
  * @Author: xuhua
  * @Date: 2023-02-15 16:31:49
  * @LastEditors: xuhua
- * @LastEditTime: 2023-02-15 17:57:12
+ * @LastEditTime: 2023-02-17 17:15:56
  * @FilePath: /bookkeeping_serve/app/controller/bill.js
  * @Description: 账单相关接口
  */
@@ -18,7 +18,7 @@ class BillController extends Controller {
 
     // 判空处理
     if (!pay_type || !amount || !type_id || !type_name || !date) {
-      ctx.body = AjaxRequest.error(400, "参数不完整");
+      ctx.body = AjaxRequest.error("参数不完整");
       return;
     }
 
@@ -132,6 +132,170 @@ class BillController extends Controller {
       });
     } catch (error) {
       console.log("BillController ~ getBillList ~ error", error);
+      ctx.body = AjaxRequest.error("系统错误");
+    }
+  }
+
+  // 获取账单详情
+  async getBillDetail() {
+    const { ctx, app } = this;
+    const { id = "" } = ctx.query;
+    const token = ctx.request.header.authorization;
+    const decode = await app.jwt.verify(token, app.config.jwt.secret);
+    if (!decode) return;
+    const user_id = decode.id;
+
+    if (!id) {
+      ctx.body = AjaxRequest.error("账单id不能为空");
+      return;
+    }
+
+    try {
+      const billDetail = await ctx.service.bill.getBillDetail(id, user_id);
+      if (!billDetail) {
+        ctx.body = AjaxRequest.error("订账单不存在");
+        return;
+      }
+      ctx.body = AjaxRequest.success("请求成功", billDetail);
+    } catch (error) {
+      console.log("BillController ~ getBillDetail ~ error", error);
+      ctx.body = AjaxRequest.error("系统错误");
+    }
+  }
+
+  // 编辑账单
+  async editBill() {
+    const { ctx, app } = this;
+    const { id, pay_type, amount, type_id, type_name, date, remark = "" } = ctx.request.body;
+    //判空
+    if (!pay_type || !amount || !type_id || !type_name || !date) {
+      ctx.body = AjaxRequest.error("参数不完整");
+      return;
+    }
+
+    try {
+      const token = ctx.request.header.authorization;
+      const decode = await app.jwt.verify(token, app.config.jwt.secret);
+      if (!decode) return;
+      const user_id = decode.id;
+
+      const result = await ctx.service.bill.editBill({
+        id,
+        user_id,
+        pay_type,
+        amount,
+        type_id,
+        type_name,
+        date,
+        remark,
+      });
+
+      if (!result) {
+        ctx.body = AjaxRequest.error("账单不存在");
+        return;
+      }
+      ctx.body = AjaxRequest.success("编辑账单成功");
+    } catch (error) {
+      console.log("BillController ~ editBill ~ error", error);
+      ctx.body = AjaxRequest.error("系统错误");
+    }
+  }
+
+  // 删除账单
+  async deleteBill() {
+    const { ctx, app } = this;
+    const { id = "" } = ctx.query;
+    if (!id) {
+      ctx.body = AjaxRequest.error("账单id不能为空");
+      return;
+    }
+
+    try {
+      const token = ctx.request.header.authorization;
+      const decode = await app.jwt.verify(token, app.config.jwt.secret);
+      if (!decode) return;
+      const user_id = decode.id;
+
+      const result = await ctx.service.bill.deleteBill(id, user_id);
+      if (result.affectedRows == 0) {
+        ctx.body = AjaxRequest.error("账单不存在");
+        return;
+      }
+      ctx.body = AjaxRequest.success("删除账单成功");
+    } catch (error) {
+      console.log("BillController ~ deleteBill ~ error", error);
+      ctx.body = AjaxRequest.error("系统错误");
+    }
+  }
+
+  // 统计账单
+  async getBillStatistics() {
+    const { ctx, app } = this;
+    const { date = "" } = ctx.query;
+
+    const token = ctx.request.header.authorization;
+    const decode = await app.jwt.verify(token, app.config.jwt.secret);
+    if (!decode) return;
+    const user_id = decode.id;
+
+    if (!date) {
+      ctx.body = AjaxRequest.error("时间参数不能为空");
+      return;
+    }
+
+    try {
+      // 1.获取账单列表
+      const billList = await ctx.service.bill.getBillList({ user_id });
+      // 2.根据时间参数,筛选出当月的账单列表
+      const start = moment(date).startOf("month").unix() * 1000; // 月初时间
+      const end = moment(date).endOf("month").unix() * 1000; // 月末时间
+      const _data = billList.filter((item) => {
+        if (item.date > start && item.date < end) {
+          return item;
+        }
+      });
+
+      // 总支出
+      let totalExpense = _data.reduce((curr, item) => {
+        if (item.pay_type == 1) {
+          curr += Number(item.amount);
+        }
+        return curr;
+      }, 0);
+
+      // 总收入
+      let totalIncome = _data.reduce((curr, item) => {
+        if (item.pay_type == 2) {
+          curr += Number(item.amount);
+        }
+        return curr;
+      }, 0);
+
+      // 收支构成
+      let incomeAndExpense = _data.reduce((curr, item) => {
+        const index = curr.findIndex((i) => i.type_id == item.type_id);
+        if (index == -1) {
+          curr.push({
+            type_id: item.type_id,
+            type_name: item.type_name,
+            pay_type: item.pay_type,
+            number: Number(item.amount),
+          });
+        }
+        if (index > -1) {
+          curr[index].number += Number(item.amount);
+        }
+        return curr;
+      }, []);
+
+      incomeAndExpense = incomeAndExpense.map((item) => {
+        item.number = Number(Number(item.number).toFixed(2));
+        return item;
+      });
+
+      ctx.body = AjaxRequest.success({ totalExpense, totalIncome, incomeAndExpense });
+    } catch (error) {
+      console.log("BillController ~ getBillStatistics ~ error", error);
       ctx.body = AjaxRequest.error("系统错误");
     }
   }

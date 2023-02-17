@@ -2,7 +2,7 @@
  * @Author: xuhua
  * @Date: 2023-02-15 15:09:32
  * @LastEditors: xuhua
- * @LastEditTime: 2023-02-15 16:54:06
+ * @LastEditTime: 2023-02-15 18:14:39
  * @FilePath: /bookkeeping_serve/app/utils/ajaxRequest.js
  * @Description:
  */
@@ -14,9 +14,9 @@ module.exports = {
       data,
     };
   },
-  error(code = 500, msg = "error", data = null) {
+  error(msg = "error", data = null) {
     return {
-      code,
+      code: 500,
       msg,
       data,
     };

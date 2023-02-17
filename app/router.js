@@ -1,3 +1,11 @@
+/*
+ * @Author: xuhua
+ * @Date: 2023-02-14 17:31:59
+ * @LastEditors: xuhua
+ * @LastEditTime: 2023-02-17 17:42:51
+ * @FilePath: /bookkeeping_serve/app/router.js
+ * @Description:
+ */
 "use strict";
 
 /**
@@ -5,6 +13,10 @@
  */
 module.exports = (app) => {
   const { router, controller, middleware } = app;
+
+  // 重定向到swagger-ui.html
+  router.redirect("/", "/swagger-ui.html", 302);
+
   const _jwt = middleware.jwtErr(app.config.jwt.secret);
   // 上传
   router.post("/api/upload", controller.upload.upload);
@@ -23,4 +35,12 @@ module.exports = (app) => {
   router.post("/api/bill/addBill", _jwt, controller.bill.addBill);
   // 账单列表
   router.get("/api/bill/getBillList", _jwt, controller.bill.getBillList);
+  // 账单详情
+  router.get("/api/bill/getBillDetail", _jwt, controller.bill.getBillDetail);
+  // 编辑账单
+  router.post("/api/bill/editBill", _jwt, controller.bill.editBill);
+  // 删除账单
+  router.get("/api/bill/deleteBill", _jwt, controller.bill.deleteBill);
+  // 账单统计
+  router.get("/api/bill/getBillStatistics", _jwt, controller.bill.getBillStatistics);
 };

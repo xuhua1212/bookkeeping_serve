@@ -2,7 +2,7 @@
  * @Author: xuhua
  * @Date: 2023-02-14 17:31:59
  * @LastEditors: xuhua
- * @LastEditTime: 2023-02-15 16:13:20
+ * @LastEditTime: 2023-02-17 17:41:21
  * @FilePath: /bookkeeping_serve/config/config.default.js
  * @Description:
  */
@@ -62,6 +62,23 @@ module.exports = (appInfo) => {
   config.jwt = {
     secret: "bookkeeping",
   };
+
+  config.swaggerdoc = {
+    dirScanner: "./app/controller",
+    apiInfo: {
+      title: "bookkeeping",
+      description: "bookkeeping api doc",
+      version: "1.0.0",
+    },
+    schemes: ["http", "https"],
+    consumes: ["application/json", "multipart/form-data"],
+    produces: ["application/json", "multipart/form-data"],
+    enableSecurity: false,
+    // enableValidate: true,
+    routerMap: true,
+    enable: true,
+  };
+
   // add your middleware config here
   config.middleware = [];
 

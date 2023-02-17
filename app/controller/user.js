@@ -2,7 +2,7 @@
  * @Author: xuhua
  * @Date: 2023-02-14 18:19:53
  * @LastEditors: xuhua
- * @LastEditTime: 2023-02-15 16:31:43
+ * @LastEditTime: 2023-02-17 17:51:47
  * @FilePath: /bookkeeping_serve/app/controller/user.js
  * @Description: 用户相关接口
  */
@@ -12,8 +12,16 @@ const moment = require("moment");
 const DEFAULT_AVATAR = "https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png";
 const DEFAULT_SIGNATURE = "这个人很懒，什么都没有留下";
 
+/**
+ * @Controller 用户相关接口
+ */
 class UserController extends Controller {
-  // 登录
+  /**
+   * @summary 用户登录
+   * @description 用户登录
+   * @router post /api/user/login
+   * @reponse 200 userResponse 登录成功
+   */
   async login() {
     const { ctx, app } = this;
     const { username, password } = ctx.request.body;
