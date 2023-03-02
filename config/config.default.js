@@ -2,7 +2,7 @@
  * @Author: xuhua
  * @Date: 2023-02-14 17:31:59
  * @LastEditors: xuhua
- * @LastEditTime: 2023-02-17 17:41:21
+ * @LastEditTime: 2023-03-02 16:36:40
  * @FilePath: /bookkeeping_serve/config/config.default.js
  * @Description:
  */
@@ -19,15 +19,16 @@ module.exports = (appInfo) => {
    * @type {Egg.EggAppConfig}
    **/
   const config = (exports = {});
-  config.security = {
-    csrf: {
-      enable: false,
-    },
-  };
 
   // use for cookie sign key, should change to your own and keep security
   config.keys = appInfo.name + "_1676367113432_523";
 
+  config.security = {
+    csrf: {
+      enable: false,
+      ignoreJSON: true,
+    },
+  };
   // 上传文件类型
   config.multipart = {
     mode: "file",
@@ -38,7 +39,9 @@ module.exports = (appInfo) => {
     credentials: true, // 允许跨域携带cookie
     allowMethods: "GET,HEAD,PUT,POST,DELETE,PATCH",
   };
-
+  config.bodyParser = {
+    jsonLimit: "300mb",
+  };
   config.mysql = {
     // 单数据库信息配置
     client: {

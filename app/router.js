@@ -2,7 +2,7 @@
  * @Author: xuhua
  * @Date: 2023-02-14 17:31:59
  * @LastEditors: xuhua
- * @LastEditTime: 2023-02-17 17:42:51
+ * @LastEditTime: 2023-03-02 16:42:26
  * @FilePath: /bookkeeping_serve/app/router.js
  * @Description:
  */
@@ -19,28 +19,28 @@ module.exports = (app) => {
 
   const _jwt = middleware.jwtErr(app.config.jwt.secret);
   // 上传
-  router.post("/api/upload", controller.upload.upload);
+  router.post("/upload", controller.upload.upload);
   // 注册
-  router.post("/api/user/register", controller.user.register);
+  router.post("/user/register", controller.user.register);
   // 登录
-  router.post("/api/user/login", controller.user.login);
+  router.post("/user/login", controller.user.login);
   // 获取用户信息
-  router.get("/api/user/getUserInfo", _jwt, controller.user.getUserInfo);
+  router.get("/user/getUserInfo", _jwt, controller.user.getUserInfo);
   // 修改用户信息(签名,头像)
-  router.post("/api/user/editUserInfo", _jwt, controller.user.editUserInfo);
+  router.post("/user/editUserInfo", _jwt, controller.user.editUserInfo);
   // 验证token
-  router.get("/api/user/verify", _jwt, controller.user.verify);
+  router.get("/user/verify", _jwt, controller.user.verify);
 
   // 账单新增
-  router.post("/api/bill/addBill", _jwt, controller.bill.addBill);
+  router.post("/bill/addBill", _jwt, controller.bill.addBill);
   // 账单列表
-  router.get("/api/bill/getBillList", _jwt, controller.bill.getBillList);
+  router.get("/bill/getBillList", _jwt, controller.bill.getBillList);
   // 账单详情
-  router.get("/api/bill/getBillDetail", _jwt, controller.bill.getBillDetail);
+  router.get("/bill/getBillDetail", _jwt, controller.bill.getBillDetail);
   // 编辑账单
-  router.post("/api/bill/editBill", _jwt, controller.bill.editBill);
+  router.post("/bill/editBill", _jwt, controller.bill.editBill);
   // 删除账单
-  router.get("/api/bill/deleteBill", _jwt, controller.bill.deleteBill);
+  router.get("/bill/deleteBill", _jwt, controller.bill.deleteBill);
   // 账单统计
-  router.get("/api/bill/getBillStatistics", _jwt, controller.bill.getBillStatistics);
+  router.get("/bill/getBillStatistics", _jwt, controller.bill.getBillStatistics);
 };
