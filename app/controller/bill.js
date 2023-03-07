@@ -2,7 +2,7 @@
  * @Author: xuhua
  * @Date: 2023-02-15 16:31:49
  * @LastEditors: xuhua
- * @LastEditTime: 2023-02-17 17:15:56
+ * @LastEditTime: 2023-03-07 17:45:22
  * @FilePath: /bookkeeping_serve/app/controller/bill.js
  * @Description: 账单相关接口
  */
@@ -55,14 +55,12 @@ class BillController extends Controller {
       const decode = await app.jwt.verify(token, app.config.jwt.secret);
       if (!decode) return;
       user_id = decode.id;
-
       // 获取账单列表
       const billList = await ctx.service.bill.getBillList({ user_id });
-
       // 过滤账单列表
       let filterBillList = billList.filter((item) => {
         if (type_id !== "all") {
-          return moment(Number(item.date)).format("YYYY-MM") === date && item.type_id === type_id;
+          return moment(Number(item.date)).format("YYYY-MM") === date && item.type_id == type_id;
         }
         return moment(Number(item.date)).format("YYYY-MM") === date;
       });
@@ -117,13 +115,12 @@ class BillController extends Controller {
       }, 0);
       // 累加计算收入
       let totalIncome = sameMonthBillList.reduce((curr, item) => {
-        if (item.pay_type == 1) {
+        if (item.pay_type == 2) {
           curr += Number(item.amount);
           return curr;
         }
         return curr;
       }, 0);
-
       ctx.body = AjaxRequest.success("请求成功", {
         totalExpense, // 当月支出
         totalIncome, // 当月收入

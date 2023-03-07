@@ -2,7 +2,7 @@
  * @Author: xuhua
  * @Date: 2023-02-14 17:31:59
  * @LastEditors: xuhua
- * @LastEditTime: 2023-03-02 16:42:26
+ * @LastEditTime: 2023-03-07 16:42:57
  * @FilePath: /bookkeeping_serve/app/router.js
  * @Description:
  */
@@ -43,4 +43,7 @@ module.exports = (app) => {
   router.get("/bill/deleteBill", _jwt, controller.bill.deleteBill);
   // 账单统计
   router.get("/bill/getBillStatistics", _jwt, controller.bill.getBillStatistics);
+
+  // 类型列表
+  router.get("/type/getTypeList", _jwt, controller.type.getTypeList);
 };
