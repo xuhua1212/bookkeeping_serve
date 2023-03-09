@@ -2,7 +2,7 @@
  * @Author: xuhua
  * @Date: 2023-02-15 16:31:49
  * @LastEditors: xuhua
- * @LastEditTime: 2023-03-07 17:45:22
+ * @LastEditTime: 2023-03-09 16:34:49
  * @FilePath: /bookkeeping_serve/app/controller/bill.js
  * @Description: 账单相关接口
  */
@@ -290,7 +290,7 @@ class BillController extends Controller {
         return item;
       });
 
-      ctx.body = AjaxRequest.success({ totalExpense, totalIncome, incomeAndExpense });
+      ctx.body = AjaxRequest.success("请求成功", { totalExpense, totalIncome, incomeAndExpense });
     } catch (error) {
       console.log("BillController ~ getBillStatistics ~ error", error);
       ctx.body = AjaxRequest.error("系统错误");
