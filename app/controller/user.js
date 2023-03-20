@@ -2,7 +2,7 @@
  * @Author: xuhua
  * @Date: 2023-02-14 18:19:53
  * @LastEditors: xuhua
- * @LastEditTime: 2023-03-02 16:38:26
+ * @LastEditTime: 2023-03-20 14:59:08
  * @FilePath: /bookkeeping_serve/app/controller/user.js
  * @Description: 用户相关接口
  */
@@ -141,6 +141,45 @@ class UserController extends Controller {
     }
   }
 
+  async modifyPass() {
+    const { ctx, app } = this;
+    const { old_pass = "", new_pass = "", new_pass2 = "" } = ctx.request.body;
+
+    try {
+      let user_id;
+      const token = ctx.request.header.authorization;
+      const decode = await app.jwt.verify(token, app.config.jwt.secret);
+      if (!decode) return;
+      if (decode.username == "admin") {
+        ctx.body = {
+          code: 400,
+          msg: "管理员账户，不允许修改密码！",
+          data: null,
+        };
+        return;
+      }
+      user_id = decode.id;
+      const userInfo = await ctx.service.user.getUserByName(decode.username);
+
+      if (old_pass != userInfo.password) {
+        ctx.body = AjaxRequest.error("原密码错误");
+        return;
+      }
+
+      if (new_pass != new_pass2) {
+        ctx.body = AjaxRequest.error("新密码不一致");
+        return;
+      }
+
+      const result = await ctx.service.user.modifyPass({
+        ...userInfo,
+        password: new_pass,
+      });
+      ctx.body = AjaxRequest.success("重置成功");
+    } catch (error) {
+      ctx.body = AjaxRequest.error("系统错误");
+    }
+  }
   // 验证方法
   async verify() {
     const { ctx, app } = this;

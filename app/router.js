@@ -2,7 +2,7 @@
  * @Author: xuhua
  * @Date: 2023-02-14 17:31:59
  * @LastEditors: xuhua
- * @LastEditTime: 2023-03-07 16:42:57
+ * @LastEditTime: 2023-03-20 14:54:17
  * @FilePath: /bookkeeping_serve/app/router.js
  * @Description:
  */
@@ -30,6 +30,8 @@ module.exports = (app) => {
   router.post("/user/editUserInfo", _jwt, controller.user.editUserInfo);
   // 验证token
   router.get("/user/verify", _jwt, controller.user.verify);
+  // 重置密码
+  router.post("/user/modifyPass", _jwt, controller.user.modifyPass);
 
   // 账单新增
   router.post("/bill/addBill", _jwt, controller.bill.addBill);
