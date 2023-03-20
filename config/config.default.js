@@ -2,7 +2,7 @@
  * @Author: xuhua
  * @Date: 2023-02-14 17:31:59
  * @LastEditors: xuhua
- * @LastEditTime: 2023-03-02 16:36:40
+ * @LastEditTime: 2023-03-20 17:31:56
  * @FilePath: /bookkeeping_serve/config/config.default.js
  * @Description:
  */
@@ -46,7 +46,7 @@ module.exports = (appInfo) => {
     // 单数据库信息配置
     client: {
       // host
-      host: "127.0.0.1",
+      host: "localhost",
       // 端口号
       port: "3306",
       // 用户名
